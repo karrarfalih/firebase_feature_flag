@@ -5,27 +5,32 @@ class _FirebaseFeatureFlagListener {
 
   _FirebaseFeatureFlagListener._(this.path) {
     _loadFromCache();
-    FirebaseDatabase.instance.ref(path).onValue.listen((event) {
-      try {
-        if (!event.snapshot.exists || event.snapshot.value == null) {
-          // No configs found, set feature flag to default
-          _Log.d(
-            'No configs found for $path. All features will be set to default value. Did you forget to add the configs to Firebase Realtime Database? click on the link below to learn how to add configs to Firebase Realtime Database. https://pub.dev/packages/firebase_feature_flag#installation',
-            isError: true,
-          );
-          return;
+    try {
+      FirebaseDatabase.instance.ref(path).onValue.listen((event) {
+        try {
+          if (!event.snapshot.exists || event.snapshot.value == null) {
+            // No configs found, set feature flag to default
+            _Log.d(
+              'No configs found for $path. All features will be set to default value. Did you forget to add the configs to Firebase Realtime Database? click on the link below to learn how to add configs to Firebase Realtime Database. https://pub.dev/packages/firebase_feature_flag#4-configure-the-real-time-database',
+              isError: true,
+            );
+            return;
+          }
+          // Parse the received data and update the feature flag
+          final map = Map<String, dynamic>.from(event.snapshot.value! as Map);
+          _Log.d('Settings for path $path received.');
+          // Save the updated value to local storage
+          subject.add(FeatureFlagData(map, true));
+          _saveToCache(map);
+        } catch (e) {
+          // Handle errors while getting app configs
+          _Log.d('Error getting app configs: $e', isError: true);
         }
-        // Parse the received data and update the feature flag
-        final map = Map<String, dynamic>.from(event.snapshot.value! as Map);
-        _Log.d('Settings for path $path received.');
-        // Save the updated value to local storage
-        subject.add(FeatureFlagData(map, true));
-        _saveToCache(map);
-      } catch (e) {
-        // Handle errors while getting app configs
-        _Log.d('Error getting app configs: $e', isError: true);
-      }
-    });
+      });
+    } catch (e) {
+      // Handle errors while getting app configs
+      _Log.d('Error getting app configs: $e', isError: true);
+    }
   }
 
   static final Map<String, _FirebaseFeatureFlagListener> _instances = {};

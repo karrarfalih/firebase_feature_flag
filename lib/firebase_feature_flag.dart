@@ -91,7 +91,7 @@ class FeatureFlag<T> {
     }
     if (val.runtimeType != T) {
       _Log.d(
-        'Can not update feature: value of $key can not be ${val.runtimeType}. The required value is $T',
+        'Can not update feature: value of $key can not be ${val.runtimeType}. The required value is $T. Did you miss the real time database configs? click on the link below to learn how to add configs to Firebase Realtime Database. https://pub.dev/packages/firebase_feature_flag#4-configure-the-real-time-database',
         isError: true,
       );
       return;
