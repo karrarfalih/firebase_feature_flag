@@ -8,11 +8,11 @@ environment:
   flutter: ">=1.17.0"
 
 dependencies:
-  firebase_database: '>=9.0.0'
+  firebase_database: '>=9.0.0 <=10.4.0'
   flutter:
     sdk: flutter
-  hive: '>=2.0.0'
-  rxdart: '>=0.27.0'
+  hive: '>=2.0.0 <=2.2.3'
+  rxdart: '>=0.27.0 <=0.27.7'
 
 dev_dependencies:
   flutter_test:
