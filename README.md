@@ -19,6 +19,7 @@ A Flutter package for managing feature flags using Firebase Realtime Database.
     - [1. Import the package](#1-import-the-package)
     - [2. Initialize a FeatureFlag instance](#2-initialize-a-featureflag-instance)
     - [3. Use FeatureFlagBuilder to conditionally display UI](#3-use-featureflagbuilder-to-conditionally-display-ui)
+    - [4. Get the current calue from anywhere](#4-get-the-current-calue-from-anywhere)
     - [4. Configure the Real Time Database](#4-configure-the-real-time-database)
     - [5. Disable log](#5-disable-log)
   - [Example](#example)
@@ -69,7 +70,7 @@ Add `firebase_feature_flag` to your `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  firebase_feature_flag: ^1.0.3
+  firebase_feature_flag: ^1.0.4
 ```
 
 Run flutter pub get to install the package.
@@ -99,6 +100,24 @@ FeatureFlagBuilder<bool>(
         : Text('Custom Widget is Disabled.');
   },
 ),
+```
+
+### 4. Get the current calue from anywhere
+```dart
+
+// Get the feature value
+final bool isMyfeatureEnabled = myFeatureFlag.value;
+if(isMyfeatureEnabled){
+  // Do somthing
+}else{
+  // Do something
+}
+
+// Or listen to the feature value
+// The stream subscription will automatically canceled after disposing the feature.
+myFeatureFlag.listen((value){
+  print(value);
+});
 ```
 
 ### 4. Configure the Real Time Database

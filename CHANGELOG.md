@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.4] - 2024-01-27
+
+- Add `listen` method to the `FeatureFlag` for value change listening.
+- Make the `subject`, `key`, and `listener` private as there are no need for them. 
+
 ## [1.0.3] - 2024-01-27
 
 - Remove `onLoading` widget in the `FeatureFlagBuilder` as the features are always have an initial value.

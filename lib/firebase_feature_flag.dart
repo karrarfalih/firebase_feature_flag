@@ -19,7 +19,7 @@ class FeatureFlag<T> {
 
   static final Map<String, FeatureFlag> _instances = {};
 
-  final String key;
+  final String _key;
 
   // Path to the feature flag in the Firebase Realtime Database
   final String _path;
@@ -27,14 +27,13 @@ class FeatureFlag<T> {
   // Whether to use the cached value or not
   final bool _useCache;
 
-
   FeatureFlag._({
     required String key,
     String? path,
     required T initialValue,
     required bool useCache,
-  })  : subject = BehaviorSubject<T>.seeded(initialValue!),
-        key = key,
+  })  : _subject = BehaviorSubject<T>.seeded(initialValue!),
+        _key = key,
         _path = path ?? 'features',
         _useCache = useCache;
 
@@ -57,26 +56,27 @@ class FeatureFlag<T> {
   }
 
   // BehaviorSubject for the feature flag values
-  final BehaviorSubject<T> subject;
+  final BehaviorSubject<T> _subject;
 
   // Getter for the current value of the feature flag
-  T get value => subject.value;
-  _FirebaseFeatureFlagListener get listener =>
-      _FirebaseFeatureFlagListener(_path, subject);
+  T get value => _subject.value;
+
+  _FirebaseFeatureFlagListener get _listener =>
+      _FirebaseFeatureFlagListener(_path, _subject);
 
   // Initialization of the feature flag
   Future<void> _init() async {
     await Hive.openBox(_path);
-    listener.subject.listen((event) {
+    _listener.subject.listen((event) {
       try {
-        if(!event.isRemote && !_useCache) {
+        if (!event.isRemote && !_useCache) {
           return;
         }
-        final value = event.value[key];
+        final value = event.value[_key];
         _add(value);
-        _Log.d('Setting $key to $value');
+        _Log.d('Setting $_key to $value');
       } catch (e) {
-        _Log.d('Error setting faeture $key: $e', isError: true);
+        _Log.d('Error setting faeture $_key: $e', isError: true);
       }
     });
   }
@@ -88,25 +88,36 @@ class FeatureFlag<T> {
       // Handle platform-specific configurations
       final platform = Platform.isAndroid ? 'android' : 'ios';
       val = val[platform];
-      _Log.d('Platform-specific settings found for $key: $platform');
+      _Log.d('Platform-specific settings found for $_key: $platform');
     }
     if (val.runtimeType != T) {
       _Log.d(
-        'Can not update feature: value of $key can not be ${val.runtimeType}. The required value is $T. Did you miss the real time database configs? click on the link below to learn how to add configs to Firebase Realtime Database. https://pub.dev/packages/firebase_feature_flag#4-configure-the-real-time-database',
+        'Can not update feature: value of $_key can not be ${val.runtimeType}. The required value is $T. Did you miss the real time database configs? click on the link below to learn how to add configs to Firebase Realtime Database. https://pub.dev/packages/firebase_feature_flag#4-configure-the-real-time-database',
         isError: true,
       );
       return;
     }
-    if (val == subject.valueOrNull) {
+    if (val == _subject.valueOrNull) {
       return;
     }
-    _Log.d('Setting $key to $val');
-    subject.add(val as T);
+    _Log.d('Setting $_key to $val');
+    _subject.add(val as T);
+  }
+
+  final List<StreamSubscription> _subscriptions = [];
+
+  StreamSubscription<T> listen(void Function(T event) onData) {
+    final subscription = _subject.listen(onData);
+    _subscriptions.add(subscription);
+    return subscription;
   }
 
   // Dispose the feature flag
   void dispose() {
-    subject.close();
-    listener.dispose(subject);
+    _subject.close();
+    _listener.dispose(_subject);
+    _subscriptions.forEach((element) {
+      element.cancel();
+    });
   }
 }

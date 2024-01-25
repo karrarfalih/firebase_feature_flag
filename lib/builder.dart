@@ -8,7 +8,6 @@ class FeatureFlagBuilder<T> extends StatefulWidget {
   // The FeatureFlag to observe.
   final FeatureFlag<T> feature;
 
-
   // Whether to dispose the feature flag when the widget is disposed.
   final bool dispose;
 
@@ -27,15 +26,15 @@ class FeatureFlagBuilder<T> extends StatefulWidget {
 class _FeatureFlagBuilderState<T> extends State<FeatureFlagBuilder<T>> {
   @override
   void dispose() {
-    if(widget.dispose) widget.feature.dispose();
+    if (widget.dispose) widget.feature.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<T>(
-      stream: widget.feature.subject,
-      initialData: widget.feature.subject.valueOrNull,
+      stream: widget.feature._subject,
+      initialData: widget.feature._subject.valueOrNull,
       builder: (context, snapshot) {
         if (snapshot.hasData && snapshot.data != null) {
           return widget.builder(context, snapshot.data as T);
