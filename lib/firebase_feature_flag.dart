@@ -1,5 +1,6 @@
 library firebase_feature_flag;
 
+import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
 import 'package:firebase_database/firebase_database.dart';

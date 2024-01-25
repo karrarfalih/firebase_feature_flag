@@ -3,10 +3,12 @@ part of 'firebase_feature_flag.dart';
 class _FirebaseFeatureFlagListener {
   final String path;
 
+  StreamSubscription? _subscription;
+
   _FirebaseFeatureFlagListener._(this.path) {
     _loadFromCache();
     try {
-      FirebaseDatabase.instance.ref(path).onValue.listen((event) {
+      _subscription ??= FirebaseDatabase.instance.ref(path).onValue.listen((event) {
         try {
           if (!event.snapshot.exists || event.snapshot.value == null) {
             // No configs found, set feature flag to default
@@ -75,6 +77,7 @@ class _FirebaseFeatureFlagListener {
     if (_subjects.isEmpty) {
       _instances.remove(path);
       subject.close();
+      _subscription?.cancel();
     }
   }
 }

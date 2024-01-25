@@ -127,6 +127,7 @@ In this example:
 "string_feature" has a string value.
 
 ### 5. Disable log
+The log is only enabled in the debug mode but you can disbale it by setting the `FeatureFlag.showLogs` to false.
 ```dart
 FeatureFlag.showLogs = false;
 ```

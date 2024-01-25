@@ -4,19 +4,18 @@ version: 1.0.2
 homepage: https://github.com/karrarfalih/firebase_feature_flag
 
 environment:
-  sdk: '>=3.2.3 <4.0.0'
+  sdk: '>=2.12.0 <4.0.0'
   flutter: ">=1.17.0"
 
 dependencies:
-  firebase_database: ^10.4.0
+  firebase_database: '>=9.0.0'
   flutter:
     sdk: flutter
-  hive: ^2.2.3
-  rxdart: ^0.27.7
+  hive: '>=2.0.0'
+  rxdart: '>=0.27.0'
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  mockito: ^5.4.4
     
 flutter:
