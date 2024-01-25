@@ -39,7 +39,7 @@ A Flutter package for managing feature flags using Firebase Realtime Database.
 ### Performance
 
 - **Enhanced Performance:** Experience optimized performance with a unified remote listener for all features.
-  - Each `FeatureFlag` instance efficiently listens to a single stream subscription from the Firebase Realtime Database.
+  - All `FeatureFlag` instances efficiently listen to a single stream subscription from the Firebase Realtime Database.
   - Stream subscriptions are automatically disposed of after all features are released, ensuring optimal performance.
 
 ### Efficient Instance Management
@@ -69,7 +69,7 @@ Add `firebase_feature_flag` to your `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  firebase_feature_flag: ^1.0.2
+  firebase_feature_flag: ^1.0.3
 ```
 
 Run flutter pub get to install the package.
@@ -98,7 +98,6 @@ FeatureFlagBuilder<bool>(
         ? CustomWidget(message: 'Custom Widget is Enabled!')
         : Text('Custom Widget is Disabled.');
   },
-  onLoading: CircularProgressIndicator(),
 ),
 ```
 

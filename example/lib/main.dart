@@ -38,7 +38,6 @@ class MyHomePage extends StatelessWidget {
                 ? const Text('Custom Widget is Enabled!')
                 : const Text('Custom Widget is Disabled.');
           },
-          onLoading: const CircularProgressIndicator(),
         ),
       ),
     );

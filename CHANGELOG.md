@@ -2,8 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.3] - 2024-01-27
+
+- Remove `onLoading` widget in the `FeatureFlagBuilder` as the features are always have an initial value.
+
 ## [1.0.2] - 2024-01-26
 
+- Dispose the Real Time Database stream subscription after disposing all the features.
 - Update dependencies constraint
 - Update `README.md` file
 

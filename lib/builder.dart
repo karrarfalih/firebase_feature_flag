@@ -8,8 +8,6 @@ class FeatureFlagBuilder<T> extends StatefulWidget {
   // The FeatureFlag to observe.
   final FeatureFlag<T> feature;
 
-  // Widget to display while the feature flag is loading.
-  final Widget onLoading;
 
   // Whether to dispose the feature flag when the widget is disposed.
   final bool dispose;
@@ -19,7 +17,6 @@ class FeatureFlagBuilder<T> extends StatefulWidget {
     Key? key,
     required this.builder,
     required this.feature,
-    required this.onLoading,
     this.dispose = false,
   }) : super(key: key);
 
@@ -37,18 +34,13 @@ class _FeatureFlagBuilderState<T> extends State<FeatureFlagBuilder<T>> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<T>(
-      // Listen to the feature flag's stream.
       stream: widget.feature.subject,
-      // Provide the initial data from the subject, or null if not available.
       initialData: widget.feature.subject.valueOrNull,
       builder: (context, snapshot) {
-        // Check if the snapshot has data and the data is not null.
         if (snapshot.hasData && snapshot.data != null) {
-          // Call the builder function with the context and the feature flag value.
           return widget.builder(context, snapshot.data as T);
         }
-        // Return the onLoading widget if data is still loading or not available.
-        return widget.onLoading;
+        return SizedBox();
       },
     );
   }
