@@ -10,35 +10,49 @@ import 'package:flutter/widgets.dart';
 
 part 'builder.dart';
 part 'log.dart';
+part 'listener.dart';
 
 class FeatureFlag<T> {
   // Static flag to control whether logs should be shown
   static bool showLogs = true;
 
-  // Tag for identifying the feature flag (optional)
-  final String? tag;
+  static final Map<String, FeatureFlag> _instances = {};
+
+  final String key;
 
   // Path to the feature flag in the Firebase Realtime Database
-  final String path;
+  final String _path;
 
-  // Initial value for the feature flag, which is used before any updates are
-  // received
-  T? initialValue;
+  // Whether to use the cached value or not
+  final bool _useCache;
 
-  // Default value for the feature flag, used when no configurations are found
-  // or there's an error
-  T? defaultValue;
 
-  FeatureFlag({
-    this.tag,
-    required this.path,
-    this.initialValue,
-    this.defaultValue,
-  }) : subject = initialValue != null || defaultValue != null
-            ? BehaviorSubject<T>.seeded(defaultValue ?? initialValue!)
-            : BehaviorSubject<T>() {
-    // Initialize the feature flag
-    init();
+  FeatureFlag._({
+    required String key,
+    String? path,
+    required T initialValue,
+    required bool useCache,
+  })  : subject = BehaviorSubject<T>.seeded(initialValue!),
+        key = key,
+        _path = path ?? 'features',
+        _useCache = useCache;
+
+  // Get the instance of the feature flag
+  factory FeatureFlag({
+    required String key,
+    String? path,
+    required T initialValue,
+    bool useCache = true,
+  }) {
+    if (!_instances.containsKey(key)) {
+      _instances[key] = FeatureFlag<T>._(
+        key: key,
+        path: path,
+        initialValue: initialValue,
+        useCache: useCache,
+      ).._init();
+    }
+    return _instances[key] as FeatureFlag<T>;
   }
 
   // BehaviorSubject for the feature flag values
@@ -46,91 +60,52 @@ class FeatureFlag<T> {
 
   // Getter for the current value of the feature flag
   T get value => subject.value;
-
-  // Reference to the Firebase Realtime Database path
-  DatabaseReference get _ref => FirebaseDatabase.instance.ref(path);
-
-  // Hive box for local storage
-  Box get box => Hive.box(path);
+  _FirebaseFeatureFlagListener get listener =>
+      _FirebaseFeatureFlagListener(_path, subject);
 
   // Initialization of the feature flag
-  Future<void> init() async {
-    // Open the Hive box for local storage
-    await Hive.openBox(path);
-
-    // Load feature flag value from local storage
-    _loadFromCache();
-
-    // Set feature flag to default value
-    _setToDefault();
-
-    // Listen for changes in the Firebase Realtime Database
-    _ref.onValue.listen((event) {
+  Future<void> _init() async {
+    await Hive.openBox(_path);
+    listener.subject.listen((event) {
       try {
-        if (!event.snapshot.exists || event.snapshot.value == null) {
-          // No configs found, set feature flag to default
-          _Log.d('No configs found for ${tag ?? path}');
-          _setToDefault();
+        if(!event.isRemote && !_useCache) {
           return;
         }
-        // Parse the received data and update the feature flag
-        final map = Map.from(event.snapshot.value! as Map);
-        _add(map);
-        _Log.d('Setting ${tag ?? path} to $map');
-        // Save the updated value to local storage
-        _saveToCache(map);
+        final value = event.value[key];
+        _add(value);
+        _Log.d('Setting $key to $value');
       } catch (e) {
-        // Handle errors while getting app configs
-        _Log.d('Error getting app configs: $e', isError: true);
-        _setToDefault();
+        _Log.d('Error setting faeture $key: $e', isError: true);
       }
     });
   }
 
-  // Save feature flag value to local storage
-  void _saveToCache(Map e) {
-    box.put(path, e);
-  }
-
-  // Load feature flag value from local storage
-  void _loadFromCache() {
-    final data = box.get(path);
-    if (data == null) {
-      return;
-    }
-    _Log.d('Setting ${tag ?? path} from cache to $data');
-    _add(data as Map);
-  }
-
   // Update the feature flag value based on received data
   void _add(Map map) {
-    dynamic val = map[path];
+    dynamic val = map[_path];
     if (val is Map && val.containsKey('android') && val.containsKey('ios')) {
       // Handle platform-specific configurations
       final platform = Platform.isAndroid ? 'android' : 'ios';
       val = val[platform];
+      _Log.d('Platform-specific settings found for $key: $platform');
     }
     if (val.runtimeType != T) {
-      // Handle mismatched types, set feature flag to default
       _Log.d(
-        'Can not update feature: value of ${tag ?? path} can not be ${val.runtimeType}. The required value is $T',
+        'Can not update feature: value of $key can not be ${val.runtimeType}. The required value is $T',
         isError: true,
       );
-      _setToDefault();
       return;
     }
     if (val == subject.valueOrNull) {
       return;
     }
-    // Update the feature flag value
+    _Log.d('Setting $key to $val');
     subject.add(val as T);
   }
 
-  // Set feature flag to default value
-  void _setToDefault() {
-    if (defaultValue != null) {
-      _Log.d('Setting ${tag ?? path} to default value: $defaultValue');
-      subject.add(defaultValue as T);
-    }
+  // Dispose the feature flag
+  void dispose() {
+    subject.close();
+    listener.dispose(subject);
   }
 }

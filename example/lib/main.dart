@@ -10,7 +10,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       title: 'Feature Flag Example',
       home: MyHomePage(),
     );
@@ -18,14 +18,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatelessWidget {
-  MyHomePage({super.key});
-
-  // Initialize FeatureFlag with a boolean type
-  final FeatureFlag<bool> myFeatureFlag = FeatureFlag<bool>(
-    path: 'feature_flags/show_custom_widget',
-    initialValue: true,
-    defaultValue: false,
-  );
+  const MyHomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -35,20 +28,19 @@ class MyHomePage extends StatelessWidget {
       ),
       body: Center(
         child: FeatureFlagBuilder<bool>(
-          // Pass the FeatureFlag instance
-          feature: myFeatureFlag,
-          // Provide a builder function with the context and feature flag value
+          feature: FeatureFlag<bool>(
+            key: 'my_feature_flag',
+            initialValue: true,
+            useCache: true,
+          ),
           builder: (context, isEnabled) {
             return isEnabled
                 ? const Text('Custom Widget is Enabled!')
                 : const Text('Custom Widget is Disabled.');
           },
-          // Loading widget to display while the feature flag is loading
           onLoading: const CircularProgressIndicator(),
         ),
       ),
     );
   }
 }
-
-
