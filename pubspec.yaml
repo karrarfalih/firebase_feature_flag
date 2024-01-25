@@ -1,0 +1,21 @@
+name: firebase_feature_flag
+description: "A new Flutter package project."
+version: 1.0.0
+
+environment:
+  sdk: '>=3.2.3 <4.0.0'
+  flutter: ">=1.17.0"
+
+dependencies:
+  firebase_database: ^10.4.0
+  flutter:
+    sdk: flutter
+  hive: ^2.2.3
+  rxdart: ^0.27.7
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  mockito: ^5.4.4
+    
+flutter:
