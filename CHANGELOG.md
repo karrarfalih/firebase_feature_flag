@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.5] - 2024-01-27
+
+- Update `README.md` file
+
 ## [1.0.4] - 2024-01-27
 
 - Add `listen` method to the `FeatureFlag` for value change listening.

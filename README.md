@@ -16,10 +16,9 @@ A Flutter package for managing feature flags using Firebase Realtime Database.
     - [Data Encapsulation](#data-encapsulation)
   - [Installation](#installation)
   - [Usage](#usage)
-    - [1. Import the package](#1-import-the-package)
-    - [2. Initialize a FeatureFlag instance](#2-initialize-a-featureflag-instance)
-    - [3. Use FeatureFlagBuilder to conditionally display UI](#3-use-featureflagbuilder-to-conditionally-display-ui)
-    - [4. Get the current calue from anywhere](#4-get-the-current-calue-from-anywhere)
+    - [1. Initialize a FeatureFlag instance](#1-initialize-a-featureflag-instance)
+    - [2. Use FeatureFlagBuilder to conditionally display UI](#2-use-featureflagbuilder-to-conditionally-display-ui)
+    - [3. Get the current value from anywhere](#3-get-the-current-value-from-anywhere)
     - [4. Configure the Real Time Database](#4-configure-the-real-time-database)
     - [5. Disable log](#5-disable-log)
   - [Example](#example)
@@ -70,27 +69,24 @@ Add `firebase_feature_flag` to your `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  firebase_feature_flag: ^1.0.4
+  firebase_feature_flag: ^1.0.5
 ```
 
 Run flutter pub get to install the package.
 
 ## Usage
 
-### 1. Import the package
+### 1. Initialize a FeatureFlag instance
 ```dart
 import 'package:firebase_feature_flag/firebase_feature_flag.dart';
-```
 
-### 2. Initialize a FeatureFlag instance
-```dart
 final FeatureFlag<bool> myFeatureFlag = FeatureFlag<bool>(
   key: 'my_feature',
   initialValue: true,
 );
 ```
 
-### 3. Use FeatureFlagBuilder to conditionally display UI
+### 2. Use FeatureFlagBuilder to conditionally display UI
 ```dart
 FeatureFlagBuilder<bool>(
   feature: myFeatureFlag,
@@ -102,7 +98,7 @@ FeatureFlagBuilder<bool>(
 ),
 ```
 
-### 4. Get the current calue from anywhere
+### 3. Get the current value from anywhere
 ```dart
 
 // Get the feature value
@@ -139,10 +135,10 @@ Below is an example of how you can structure your Firebase Realtime Database to 
 ```
 In this example:
 
-"bool_feature" has a boolean value.
-"bool_feature_platform_specific" has a platform-specific boolean value.
-"int_feature" has an int value.
-"string_feature" has a string value.
+- "bool_feature" has a boolean value.
+- "bool_feature_platform_specific" has a platform-specific boolean value.
+- "int_feature" has an int value.
+- "string_feature" has a string value.
 
 ### 5. Disable log
 The log is only enabled in the debug mode but you can disbale it by setting the `FeatureFlag.showLogs` to false.
