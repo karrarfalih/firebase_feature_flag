@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:flutter/widgets.dart';
 
@@ -65,8 +66,7 @@ class FeatureFlag<T> {
       _FirebaseFeatureFlagListener(_path, _subject);
 
   // Initialization of the feature flag
-  Future<void> _init() async {
-    await Hive.openBox(_path);
+  void _init() {
     _listener.subject.listen((event) {
       try {
         if (!event.isRemote && !_useCache) {

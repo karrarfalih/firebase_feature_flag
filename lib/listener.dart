@@ -6,9 +6,27 @@ class _FirebaseFeatureFlagListener {
   StreamSubscription? _subscription;
 
   _FirebaseFeatureFlagListener._(this.path) {
-    _loadFromCache();
+    _init();
+  }
+
+  static final Map<String, _FirebaseFeatureFlagListener> _instances = {};
+
+  final Set<BehaviorSubject> _subjects = {};
+
+  factory _FirebaseFeatureFlagListener(String path, BehaviorSubject subject) {
+    if (!_instances.containsKey(path)) {
+      _instances[path] = _FirebaseFeatureFlagListener._(path);
+    }
+    return _instances[path]!.._subjects.add(subject);
+  }
+
+  final subject = BehaviorSubject<FeatureFlagData>();
+
+  _init() async {
+    await _loadFromCache();
     try {
-      _subscription ??= FirebaseDatabase.instance.ref(path).onValue.listen((event) {
+      _subscription ??=
+          FirebaseDatabase.instance.ref(path).onValue.listen((event) {
         try {
           if (!event.snapshot.exists || event.snapshot.value == null) {
             // No configs found, set feature flag to default
@@ -35,19 +53,6 @@ class _FirebaseFeatureFlagListener {
     }
   }
 
-  static final Map<String, _FirebaseFeatureFlagListener> _instances = {};
-
-  final Set<BehaviorSubject> _subjects = {};
-
-  factory _FirebaseFeatureFlagListener(String path, BehaviorSubject subject) {
-    if (!_instances.containsKey(path)) {
-      _instances[path] = _FirebaseFeatureFlagListener._(path);
-    }
-    return _instances[path]!.._subjects.add(subject);
-  }
-
-  final subject = BehaviorSubject<FeatureFlagData>();
-
   // Save feature flag value to local storage
   Future<void> _saveToCache(Map e) async {
     await Hive.openBox('features');
@@ -60,7 +65,8 @@ class _FirebaseFeatureFlagListener {
 
   // Load feature flag value from local storage
   Future<void> _loadFromCache() async {
-    await Hive.openBox('features');
+    await Hive.initFlutter();
+    await Hive.openBox(path);
     try {
       final data = Hive.box('features').get(path);
       if (data == null) {
