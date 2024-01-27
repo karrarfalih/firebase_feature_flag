@@ -8,12 +8,12 @@ A Flutter package for managing feature flags using Firebase Realtime Database.
 - [Table of Contents](#table-of-contents)
   - [Overview](#overview)
   - [Key Features](#key-features)
-    - [Dynamic Path Customization](#dynamic-path-customization)
+    - [Realtime Synchronous](#realtime-synchronous)
+    - [Cache](#cache)
     - [Performance](#performance)
     - [Efficient Instance Management](#efficient-instance-management)
     - [Flexible Configuration Options](#flexible-configuration-options)
     - [Widget Lifecycle Control](#widget-lifecycle-control)
-    - [Data Encapsulation](#data-encapsulation)
   - [Installation](#installation)
   - [Usage](#usage)
     - [1. Initialize a FeatureFlag instance](#1-initialize-a-featureflag-instance)
@@ -26,15 +26,19 @@ A Flutter package for managing feature flags using Firebase Realtime Database.
 
 ## Overview
 
-`firebase_feature_flag` provides a convenient way to integrate feature flags into your Flutter app, allowing you to toggle features on and off remotely without requiring a new release. It utilizes Firebase Realtime Database to store and synchronize feature flag configurations.
+`firebase_feature_flag` provides a convenient way to integrate feature flags into your Flutter app, allowing you to toggle features on and off remotely without requiring a new release. It utilizes Firebase Realtime Database to store and synchronize feature flag configurations in realtime.
 
 ## Key Features
 
-### Dynamic Path Customization
+### Realtime Synchronous
 
-- **Dynamic Path Support:** Customize feature flag paths dynamically with the introduction of dynamic path support in `FeatureFlag`.
-  - Specify custom paths when initializing a `FeatureFlag` instance.
-  - Default path is set to 'features' if a custom path is not provided.
+- **Realtime Synchronous:** Enjoy real-time synchronization of feature flag changes across your Flutter app.
+  - Changes in the Firebase Realtime Database are reflected synchronously, providing immediate updates to feature flags.
+
+### Cache
+
+- **Cache:** Enhance performance and reduce latency by utilizing the cache for storing feature flag configurations.
+  - Cached configurations provide quick access to feature flags, especially in scenarios with limited or no internet connectivity.
 
 ### Performance
 
@@ -58,10 +62,6 @@ A Flutter package for managing feature flags using Firebase Realtime Database.
 - **Widget Management:** Gain control over widget lifecycles with added properties in `FeatureFlagBuilder`.
   - Use the `dispose` property to determine whether to dispose or keep the feature after the widget is disposed (default is false).
 
-### Data Encapsulation
-
-- **Data Encapsulation:** Improved encapsulation with the introduction of `FeatureFlagData` class.
-  - Encapsulate feature flag data and its source information (remote or local).
 
 ## Installation
 
@@ -69,7 +69,7 @@ Add `firebase_feature_flag` to your `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  firebase_feature_flag: ^1.0.7
+  firebase_feature_flag: ^1.0.8
 ```
 
 Run flutter pub get to install the package.

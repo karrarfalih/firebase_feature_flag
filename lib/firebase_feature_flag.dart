@@ -5,7 +5,6 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:flutter/widgets.dart';
@@ -74,7 +73,6 @@ class FeatureFlag<T> {
         }
         final value = event.value[_key];
         _add(value);
-        _Log.d('Setting $_key to $value');
       } catch (e) {
         _Log.d('Error setting faeture $_key: $e', isError: true);
       }
@@ -82,8 +80,7 @@ class FeatureFlag<T> {
   }
 
   // Update the feature flag value based on received data
-  void _add(Map map) {
-    dynamic val = map[_path];
+  void _add(dynamic val) {
     if (val is Map && val.containsKey('android') && val.containsKey('ios')) {
       // Handle platform-specific configurations
       final platform = Platform.isAndroid ? 'android' : 'ios';
