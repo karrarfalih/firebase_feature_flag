@@ -49,7 +49,8 @@ class _FirebaseFeatureFlagListener {
   final subject = BehaviorSubject<FeatureFlagData>();
 
   // Save feature flag value to local storage
-  void _saveToCache(Map e) {
+  Future<void> _saveToCache(Map e) async {
+    await Hive.openBox('features');
     try {
       Hive.box('features').put(path, e);
     } catch (e) {
@@ -58,7 +59,8 @@ class _FirebaseFeatureFlagListener {
   }
 
   // Load feature flag value from local storage
-  void _loadFromCache() {
+  Future<void> _loadFromCache() async {
+    await Hive.openBox('features');
     try {
       final data = Hive.box('features').get(path);
       if (data == null) {
