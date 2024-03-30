@@ -1,6 +1,6 @@
 name: firebase_feature_flag
 description: "A Flutter package for managing feature flags using Firebase Realtime Database."
-version: 1.0.8
+version: 1.0.9
 homepage: https://github.com/karrarfalih/firebase_feature_flag
 
 environment:

@@ -87,7 +87,7 @@ class FeatureFlag<T> {
       val = val[platform];
       _Log.d('Platform-specific settings found for $_key: $platform');
     }
-    if (val.runtimeType != T) {
+    if (val is! T && (T is Map && val is! Map || T is List && val is! List)) {
       _Log.d(
         'Can not update feature: value of $_key can not be ${val.runtimeType}. The required value is $T. Did you miss the real time database configs? click on the link below to learn how to add configs to Firebase Realtime Database. https://pub.dev/packages/firebase_feature_flag#4-configure-the-real-time-database',
         isError: true,
@@ -98,7 +98,15 @@ class FeatureFlag<T> {
       return;
     }
     _Log.d('Setting $_key to $val');
-    _subject.add(val as T);
+    late T value;
+    if (_subject.value is Map) {
+      value = Map.from(val) as T;
+    } else if (_subject.value is List) {
+      value = List.from(val) as T;
+    } else {
+      value = val as T;
+    }
+    _subject.add(value);
   }
 
   final List<StreamSubscription> _subscriptions = [];
