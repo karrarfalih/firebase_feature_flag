@@ -3,9 +3,11 @@ part of 'firebase_feature_flag.dart';
 class _FirebaseFeatureFlagListener {
   final String path;
 
+  final bool isLive;
+
   StreamSubscription? _subscription;
 
-  _FirebaseFeatureFlagListener._(this.path) {
+  _FirebaseFeatureFlagListener._(this.path, this.isLive) {
     _init();
   }
 
@@ -13,9 +15,10 @@ class _FirebaseFeatureFlagListener {
 
   final Set<BehaviorSubject> _subjects = {};
 
-  factory _FirebaseFeatureFlagListener(String path, BehaviorSubject subject) {
+  factory _FirebaseFeatureFlagListener(
+      String path, BehaviorSubject subject, bool isLive) {
     if (!_instances.containsKey(path)) {
-      _instances[path] = _FirebaseFeatureFlagListener._(path);
+      _instances[path] = _FirebaseFeatureFlagListener._(path, isLive);
     }
     return _instances[path]!.._subjects.add(subject);
   }
@@ -24,6 +27,47 @@ class _FirebaseFeatureFlagListener {
 
   _init() async {
     await _loadFromCache();
+    if (!isLive) {
+      _fetchData();
+      return;
+    }
+    _startListening();
+  }
+
+  Future<void> refresh() async {
+    await _fetchData();
+  }
+
+  _fetchData() async {
+    try {
+      await FirebaseDatabase.instance.ref(path).get().then((snapshot) {
+        try {
+          if (!snapshot.exists || snapshot.value == null) {
+            // No configs found, set feature flag to default
+            _Log.d(
+              'No configs found for $path. All features will be set to default value. Did you forget to add the configs to Firebase Realtime Database? click on the link below to learn how to add configs to Firebase Realtime Database. https://pub.dev/packages/firebase_feature_flag#4-configure-the-real-time-database',
+              isError: true,
+            );
+            return;
+          }
+          // Parse the received data and update the feature flag
+          final map = Map<String, dynamic>.from(snapshot.value! as Map);
+          _Log.d('Settings for path $path received.');
+          // Save the updated value to local storage
+          subject.add(FeatureFlagData(map, true));
+          _saveToCache(map);
+        } catch (e) {
+          // Handle errors while getting app configs
+          _Log.d('Error getting app configs: $e', isError: true);
+        }
+      });
+    } catch (e) {
+      // Handle errors while getting app configs
+      _Log.d('Error getting app configs: $e', isError: true);
+    }
+  }
+
+  _startListening() {
     try {
       _subscription ??=
           FirebaseDatabase.instance.ref(path).onValue.listen((event) {

@@ -1,6 +1,10 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [1.0.10] - 2024-04-25
+
+- **Feature**: Add `isLive` flag to the `FeatureFlag` class to determine either keep the listening to the firebase database or get the value once each run.
+
 ## [1.0.9] - 2024-03-30
 
 - **Bugfix**: Fix Map/List values.

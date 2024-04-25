@@ -27,11 +27,14 @@ class FeatureFlag<T> {
   // Whether to use the cached value or not
   final bool _useCache;
 
+  final bool isLive;
+
   FeatureFlag._({
     required String key,
     String? path,
     required T initialValue,
     required bool useCache,
+    this.isLive = true,
   })  : _subject = BehaviorSubject<T>.seeded(initialValue!),
         _key = key,
         _path = path ?? 'features',
@@ -62,7 +65,7 @@ class FeatureFlag<T> {
   T get value => _subject.value;
 
   _FirebaseFeatureFlagListener get _listener =>
-      _FirebaseFeatureFlagListener(_path, _subject);
+      _FirebaseFeatureFlagListener(_path, _subject, isLive);
 
   // Initialization of the feature flag
   void _init() {
@@ -110,6 +113,10 @@ class FeatureFlag<T> {
   }
 
   final List<StreamSubscription> _subscriptions = [];
+
+  refresh() async {
+    await _listener.refresh();
+  }
 
   StreamSubscription<T> listen(void Function(T event) onData) {
     final subscription = _subject.listen(onData);
