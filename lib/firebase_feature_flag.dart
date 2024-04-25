@@ -46,6 +46,7 @@ class FeatureFlag<T> {
     String? path,
     required T initialValue,
     bool useCache = true,
+    bool isLive = true,
   }) {
     if (!_instances.containsKey(key)) {
       _instances[key] = FeatureFlag<T>._(
@@ -53,6 +54,7 @@ class FeatureFlag<T> {
         path: path,
         initialValue: initialValue,
         useCache: useCache,
+        isLive: isLive,
       ).._init();
     }
     return _instances[key] as FeatureFlag<T>;
