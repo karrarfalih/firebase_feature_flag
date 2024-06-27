@@ -69,7 +69,7 @@ Add `firebase_feature_flag` to your `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  firebase_feature_flag: ^1.0.12
+  firebase_feature_flag: ^1.0.13
 ```
 
 Run flutter pub get to install the package.

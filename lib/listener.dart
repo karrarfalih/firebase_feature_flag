@@ -5,9 +5,11 @@ class _FirebaseFeatureFlagListener {
 
   final bool isLive;
 
+  final bool debug;
+
   StreamSubscription? _subscription;
 
-  _FirebaseFeatureFlagListener._(this.path, this.isLive) {
+  _FirebaseFeatureFlagListener._(this.path, this.isLive, this.debug) {
     _init();
   }
 
@@ -16,9 +18,9 @@ class _FirebaseFeatureFlagListener {
   final Set<BehaviorSubject> _subjects = {};
 
   factory _FirebaseFeatureFlagListener(
-      String path, BehaviorSubject subject, bool isLive) {
+      String path, BehaviorSubject subject, bool isLive, bool debug) {
     if (!_instances.containsKey(path)) {
-      _instances[path] = _FirebaseFeatureFlagListener._(path, isLive);
+      _instances[path] = _FirebaseFeatureFlagListener._(path, isLive, debug);
     }
     return _instances[path]!.._subjects.add(subject);
   }
@@ -52,7 +54,7 @@ class _FirebaseFeatureFlagListener {
           }
           // Parse the received data and update the feature flag
           final map = Map<String, dynamic>.from(snapshot.value! as Map);
-          _Log.d('Settings for path $path received.');
+          if (debug) _Log.d('Settings for path $path received.');
           // Save the updated value to local storage
           subject.add(FeatureFlagData(map, true));
           _saveToCache(map);
@@ -82,7 +84,7 @@ class _FirebaseFeatureFlagListener {
           }
           // Parse the received data and update the feature flag
           final map = Map<String, dynamic>.from(event.snapshot.value! as Map);
-          _Log.d('Settings for path $path received.');
+          if (debug) _Log.d('Settings for path $path received.');
           // Save the updated value to local storage
           subject.add(FeatureFlagData(map, true));
           _saveToCache(map);
@@ -116,7 +118,7 @@ class _FirebaseFeatureFlagListener {
       if (data == null) {
         return;
       }
-      _Log.d('Setting for path $path loaded from cache.');
+      if (debug) _Log.d('Setting for path $path loaded from cache.');
       subject.add(FeatureFlagData(data, false));
     } catch (e) {
       _Log.d('Error loading feature flag from cache: $e', isError: true);

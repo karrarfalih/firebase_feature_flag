@@ -29,12 +29,15 @@ class FeatureFlag<T> {
 
   final bool isLive;
 
+  final bool debug;
+
   FeatureFlag._({
     required String key,
     String? path,
     required T initialValue,
     required bool useCache,
     this.isLive = true,
+    this.debug = true,
   })  : _subject = BehaviorSubject<T>.seeded(initialValue!),
         _key = key,
         _path = path ?? 'features',
@@ -47,6 +50,7 @@ class FeatureFlag<T> {
     required T initialValue,
     bool useCache = true,
     bool isLive = true,
+    bool debug = true,
   }) {
     if (!_instances.containsKey(key)) {
       _instances[key] = FeatureFlag<T>._(
@@ -55,6 +59,7 @@ class FeatureFlag<T> {
         initialValue: initialValue,
         useCache: useCache,
         isLive: isLive,
+        debug: debug,
       ).._init();
     }
     return _instances[key] as FeatureFlag<T>;
@@ -67,7 +72,7 @@ class FeatureFlag<T> {
   T get value => _subject.value;
 
   _FirebaseFeatureFlagListener get _listener =>
-      _FirebaseFeatureFlagListener(_path, _subject, isLive);
+      _FirebaseFeatureFlagListener(_path, _subject, isLive, debug);
 
   // Initialization of the feature flag
   void _init() {

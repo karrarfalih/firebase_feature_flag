@@ -1,6 +1,10 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [1.0.13] - 2024-06-27
+
+- **Feature**: Add `debug` flag to the `FeatureFlag` class to determine either print debug messages or not.
+
 ## [1.0.12] - 2024-04-25
 
 - **Feature**: Add `isLive` flag to the `FeatureFlag` class to determine either keep the listening to the firebase database or get the value once each run.
