@@ -95,7 +95,7 @@ class FeatureFlag<T> {
       // Handle platform-specific configurations
       final platform = Platform.isAndroid ? 'android' : 'ios';
       val = val[platform];
-      _Log.d('Platform-specific settings found for $_key: $platform');
+      if(debug) _Log.d('Platform-specific settings found for $_key: $platform');
     }
     if (val is! T && (T is Map && val is! Map || T is List && val is! List)) {
       _Log.d(
@@ -107,7 +107,7 @@ class FeatureFlag<T> {
     if (val == _subject.valueOrNull) {
       return;
     }
-    _Log.d('Setting $_key to $val');
+    if(debug) _Log.d('Setting $_key to $val');
     late T value;
     if (_subject.value is Map) {
       value = Map.from(val) as T;

@@ -119,7 +119,7 @@ class _FirebaseFeatureFlagListener {
         return;
       }
       if (debug) _Log.d('Setting for path $path loaded from cache.');
-      subject.add(FeatureFlagData(data, false));
+      subject.add(FeatureFlagData(Map<String, dynamic>.from(data), false));
     } catch (e) {
       _Log.d('Error loading feature flag from cache: $e', isError: true);
     }
