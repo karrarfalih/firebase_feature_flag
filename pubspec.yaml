@@ -1,6 +1,6 @@
 name: firebase_feature_flag
 description: "A Flutter package for managing feature flags using Firebase Realtime Database."
-version: 1.0.14
+version: 1.0.15
 homepage: https://github.com/karrarfalih/firebase_feature_flag
 
 environment:
@@ -8,15 +8,14 @@ environment:
   flutter: ">=1.17.0"
 
 dependencies:
-  firebase_database: '>=9.0.0 <=10.4.0'
+  firebase_database: '>=9.0.0 <=11.1.4'
   flutter:
     sdk: flutter
   hive: '>=2.0.0 <=2.2.3'
   hive_flutter: ^1.1.0
-  rxdart: '>=0.27.0 <=0.27.7'
+  rxdart: '>=0.27.0 <=0.28.0'
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
     
-flutter:

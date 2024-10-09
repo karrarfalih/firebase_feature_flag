@@ -1,6 +1,10 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [1.0.15] - 2024-10-09
+
+- Update dependencies.
+- 
 ## [1.0.14] - 2024-06-27
 
 - **Feature**: Add `debug` flag to the `FeatureFlag` class to determine either print debug messages or not.
