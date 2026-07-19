@@ -1,6 +1,10 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [1.0.17] - 2026-7-19
+
+- Update dependencies.
+
 ## [1.0.16] - 2025-8-3
 
 - Update dependencies.
